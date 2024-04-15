@@ -8,6 +8,8 @@ router.register('user',UserViewSet,basename='user')
 router.register('product',Productviewset,basename='products')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('register',registerview.as_view()),
+    path('api/', include('rest_framework.urls')),
+    path('login/', CustomAuthToken.as_view()),
+    path('register/', RegisterView.as_view()),
+    path('api-token-auth/', views.obtain_auth_token),
 ]
