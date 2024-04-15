@@ -6,6 +6,17 @@ from.serialzers import userSerialzer,productSerializer,reisterserializer
 from.models import user,product
 from rest_framework.authtoken.views import ObtainAuthToken
 
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        if user.is_approved:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'User is not approved'}, status=401)
+
 class registerview(generics.CreateAPIView):
     serializer_class=reisterserializer
 
